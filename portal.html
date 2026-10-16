@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Member Area — Partners Unlimited (HK) Pte Ltd</title>
+<meta name="description" content="Partners Unlimited member area: view and maintain your company profile in the network directory.">
+<link rel="icon" href="assets/img/favicon.png" sizes=64x64 type=image/png>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<!-- Demo gate: the network has no backend on GitHub Pages, so this is a UI affordance only. -->
+<div class="gate" id="gate">
+  <div class="gate__card">
+    <img src="assets/img/logo.png" width="300" height="188" alt="Partners Unlimited" style="height:54px;width:auto">
+    <h1>Member Area</h1>
+    <p>Sign in to review and maintain the profile your company publishes in the network directory.</p>
+
+    <form class="gate__form" id="login-form" novalidate>
+      <div class="field">
+        <label for="login-email">Work e-mail</label>
+        <input id="login-email" name="email" type="email" autocomplete="username" placeholder="you@company.com" required>
+      </div>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <div class="field">
+        <label for="login-member">Sign in as</label>
+        <select id="login-member" name="member"></select>
+      </div>
+      <button class="btn btn--primary" type="submit">Sign in</button>
+      <p class="muted" id="login-error" style="font-size:.88rem;margin:0" role="alert" hidden></p>
+    </form>
+
+    <div class="gate__hint">
+      <strong>Demo access.</strong> Any e-mail address works with the password <code>demo</code>. Picking a company loads that member’s profile so you can see the directory entry it produces.
+    </div>
+
+    <p class="gate__foot"><a href="index.html">Back to the public site</a> · <a href="directory.html">Member directory</a></p>
+  </div>
+</div>
+
+<div class="app" id="shell" hidden>
+  <aside class="app__aside">
+    <a class="app__brand" href="index.html">
+      <img src="assets/img/logo.png" width="300" height="188" alt="Partners Unlimited">
+      <span>Member Area</span>
+    </a>
+
+    <nav class="app__nav" aria-label="Member area">
+      <p class="app__section-label">Your account</p>
+      <a class="app__nav-link is-active" href="portal.html" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 20.4v-1.8a4 4 0 0 1 4-4h4.8a4 4 0 0 1 4 4v1.8"/><circle cx="10" cy="7.4" r="3.6"/><path d="M17.2 4.2a3.4 3.4 0 0 1 0 6.4"/></svg>
+        Company profile
+      </a>
+      <p class="app__section-label">The network</p>
+      <a class="app__nav-link" href="directory.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4M12 2.8c2.6 2.4 4 5.7 4 9.2s-1.4 6.8-4 9.2c-2.6-2.4-4-5.7-4-9.2s1.4-6.8 4-9.2z"/></svg>
+        Member directory
+      </a>
+      <a class="app__nav-link" href="membership.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2.8H6.8a1.8 1.8 0 0 0-1.8 1.8v14.8a1.8 1.8 0 0 0 1.8 1.8h10.4a1.8 1.8 0 0 0 1.8-1.8V7.6z"/><path d="M14 2.8v4.8h4.8M8.8 13h6.4M8.8 16.6h6.4"/></svg>
+        Membership terms
+      </a>
+    </nav>
+
+    <div class="app__aside-foot">
+      <div class="app__who">
+        <span class="monogram monogram--sm" id="who-mark" aria-hidden="true"></span>
+        <p><strong id="who-name"></strong><span id="who-email"></span></p>
+      </div>
+      <button class="link-btn" type="button" id="sign-out">Sign out</button>
+      <a class="app__exit" href="index.html">← Exit to public site</a>
+    </div>
+  </aside>
+
+  <div class="app__main">
+    <header class="app__topbar">
+      <div>
+        <h1>Company profile</h1>
+        <p>This is what other members and prospective partners see in the public directory.</p>
+      </div>
+      <div class="app__actions">
+        <button class="btn btn--ghost btn--sm" type="button" id="edit-toggle">Edit profile</button>
+        <button class="btn btn--primary btn--sm" type="button" id="save-profile" hidden>Save changes</button>
+        <button class="btn btn--ghost btn--sm" type="button" id="cancel-edit" hidden>Cancel</button>
+      </div>
+    </header>
+
+    <div class="app__body">
+      <div class="notice" style="margin-bottom:18px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 8.2v.1M12 11v5"/></svg>
+        <div><strong>Demo environment.</strong> Edits are saved in this browser only and are not sent to the network. In the live site these changes queue for Board review.</div>
+      </div>
+
+      <div class="app__panel" id="profile-view"></div>
+
+      <form class="app__panel" id="profile-edit" hidden>
+        <div class="app__panel-head">
+          <div>
+            <h2>Edit profile</h2>
+            <p>Keep your contact desk current — referrals follow the details on this page.</p>
+          </div>
+        </div>
+        <div class="app__panel-body">
+          <div class="form-grid">
+            <div class="field field--full">
+              <label for="f-name">Registered company name</label>
+              <input id="f-name" name="name" type="text" required>
+            </div>
+            <div class="field">
+              <label for="f-city">City</label>
+              <input id="f-city" name="city" type="text" required>
+            </div>
+            <div class="field">
+              <label for="f-country">Country</label>
+              <input id="f-country" name="country" type="text" required>
+            </div>
+            <div class="field">
+              <label for="f-region">Region</label>
+              <select id="f-region" name="region"></select>
+            </div>
+            <div class="field">
+              <label for="f-tier">Market tier</label>
+              <select id="f-tier" name="tier"></select>
+            </div>
+            <div class="field">
+              <label for="f-since">Member since</label>
+              <input id="f-since" name="since" type="number" min="1990" max="2100" step="1">
+            </div>
+            <div class="field">
+              <label for="f-staff">Team size</label>
+              <input id="f-staff" name="staff" type="number" min="0" step="1">
+            </div>
+            <div class="field field--full">
+              <label for="f-website">Website</label>
+              <input id="f-website" name="website" type="text" placeholder="company.com">
+            </div>
+            <div class="field field--full">
+              <label for="f-about">Directory summary</label>
+              <textarea id="f-about" name="about" style="min-height:110px"></textarea>
+            </div>
+            <div class="field">
+              <label for="f-contact-name">Contact name</label>
+              <input id="f-contact-name" name="contactName" type="text">
+            </div>
+            <div class="field">
+              <label for="f-contact-title">Contact title</label>
+              <input id="f-contact-title" name="contactTitle" type="text">
+            </div>
+            <div class="field">
+              <label for="f-contact-email">Contact e-mail</label>
+              <input id="f-contact-email" name="contactEmail" type="email">
+            </div>
+            <div class="field">
+              <label for="f-contact-phone">Contact telephone</label>
+              <input id="f-contact-phone" name="contactPhone" type="tel">
+            </div>
+            <div class="field field--full">
+              <label id="services-label">Service lines</label>
+              <div class="chip-row" id="f-services" role="group" aria-labelledby="services-label"></div>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script src="assets/data/members.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/portal.js"></script>
+</body>
+</html>

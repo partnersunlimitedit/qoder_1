@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Network Admin — Partners Unlimited (HK) Pte Ltd</title>
+<meta name="description" content="Partners Unlimited board administration demo: member records, membership applications and network rules.">
+<link rel="icon" href="assets/img/favicon.png" sizes=64x64 type=image/png>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;450;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/app.css">
+</head>
+<body>
+
+<!-- Demo gate. This is a static GitHub Pages site with no server, so the gate is a
+     presentation only — admin.html and its data are publicly downloadable. Never put
+     real member records here. -->
+<div class="gate" id="gate">
+  <div class="gate__card">
+    <img src="assets/img/logo.png" width="300" height="188" alt="Partners Unlimited" style="height:54px;width:auto">
+    <h1>Network Admin</h1>
+    <p>Board access to the member register, the application queue and the network rules.</p>
+
+    <form class="gate__form" id="login-form" novalidate>
+      <div class="field">
+        <label for="login-email">Board e-mail</label>
+        <input id="login-email" name="email" type="email" autocomplete="username" placeholder="board@partnersunlimited.net" required>
+      </div>
+      <div class="field">
+        <label for="login-password">Password</label>
+        <input id="login-password" name="password" type="password" autocomplete="current-password" required>
+      </div>
+      <button class="btn btn--primary" type="submit">Sign in</button>
+      <p class="muted" id="login-error" style="font-size:.88rem;margin:0" role="alert" hidden></p>
+    </form>
+
+    <div class="gate__hint">
+      <strong>Demo access.</strong> Any e-mail address works with the password <code>demo</code>. Everything you change here is written to this browser’s local storage and is visible on the public directory.
+    </div>
+
+    <p class="gate__foot"><a href="index.html">Back to the public site</a> · <a href="directory.html">Member directory</a></p>
+  </div>
+</div>
+
+<div class="app" id="shell" hidden>
+  <aside class="app__aside">
+    <a class="app__brand" href="index.html">
+      <img src="assets/img/logo.png" width="300" height="188" alt="Partners Unlimited">
+      <span>Network Admin</span>
+    </a>
+
+    <nav class="app__nav" aria-label="Administration">
+      <p class="app__section-label">Membership</p>
+      <button class="app__nav-link is-active" type="button" data-view="members" aria-current="page">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3.6 20.4v-1.8a4 4 0 0 1 4-4h4.8a4 4 0 0 1 4 4v1.8"/><circle cx="10" cy="7.4" r="3.6"/><path d="M17.2 4.2a3.4 3.4 0 0 1 0 6.4"/></svg>
+        Member register
+        <span class="count" id="count-members"></span>
+      </button>
+      <button class="app__nav-link" type="button" data-view="queue">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2.8H6.8a1.8 1.8 0 0 0-1.8 1.8v14.8a1.8 1.8 0 0 0 1.8 1.8h10.4a1.8 1.8 0 0 0 1.8-1.8V7.6z"/><path d="M14 2.8v4.8h4.8M9.2 13.4l2 2 3.6-3.8"/></svg>
+        Applications
+        <span class="count" id="count-queue"></span>
+      </button>
+      <p class="app__section-label">Network</p>
+      <button class="app__nav-link" type="button" data-view="settings">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.2 14.6a1.5 1.5 0 0 0 .3 1.66l.05.05a1.8 1.8 0 1 1-2.55 2.55l-.05-.05a1.5 1.5 0 0 0-1.66-.3 1.5 1.5 0 0 0-.9 1.37v.15a1.8 1.8 0 1 1-3.6 0v-.08a1.5 1.5 0 0 0-.98-1.37 1.5 1.5 0 0 0-1.66.3l-.05.05a1.8 1.8 0 1 1-2.55-2.55l.05-.05a1.5 1.5 0 0 0 .3-1.66 1.5 1.5 0 0 0-1.37-.9H3.9a1.8 1.8 0 1 1 0-3.6h.15a1.5 1.5 0 0 0 1.37-.98 1.5 1.5 0 0 0-.3-1.66l-.05-.05A1.8 1.8 0 1 1 7.62 3.1l.05.05a1.5 1.5 0 0 0 1.66.3h.07a1.5 1.5 0 0 0 .9-1.37V1.9a1.8 1.8 0 1 1 3.6 0v.15a1.5 1.5 0 0 0 .9 1.37 1.5 1.5 0 0 0 1.66-.3l.05-.05a1.8 1.8 0 1 1 2.55 2.55l-.05.05a1.5 1.5 0 0 0-.3 1.66v.07a1.5 1.5 0 0 0 1.37.9h.15a1.8 1.8 0 1 1 0 3.6h-.15a1.5 1.5 0 0 0-1.37.9z"/></svg>
+        Network rules
+      </button>
+      <a class="app__nav-link" href="directory.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M2.8 12h18.4M12 2.8c2.6 2.4 4 5.7 4 9.2s-1.4 6.8-4 9.2c-2.6-2.4-4-5.7-4-9.2s1.4-6.8 4-9.2z"/></svg>
+        Public directory
+      </a>
+      <a class="app__nav-link" href="portal.html">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3.4" y="10.2" width="17.2" height="10.6" rx="2.2"/><path d="M7.6 10.2V7.4a4.4 4.4 0 0 1 8.8 0v2.8"/></svg>
+        Member area
+      </a>
+    </nav>
+
+    <div class="app__aside-foot">
+      <div class="app__who">
+        <span class="monogram monogram--sm" aria-hidden="true">PU</span>
+        <p><strong>Board secretariat</strong><span id="who-email"></span></p>
+      </div>
+      <button class="link-btn" type="button" id="sign-out">Sign out</button>
+      <a class="app__exit" href="index.html">← Exit to public site</a>
+    </div>
+  </aside>
+
+  <div class="app__main">
+    <header class="app__topbar">
+      <div>
+        <h1 id="view-title">Member register</h1>
+        <p id="view-sub">Every company published in the network directory, and the country slots they occupy.</p>
+      </div>
+      <div class="app__actions" id="view-actions"></div>
+    </header>
+
+    <div class="app__body">
+      <div class="notice" style="margin-bottom:18px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.2"/><path d="M12 8.2v.1M12 11v5"/></svg>
+        <div><strong>Demo environment with fictional companies.</strong> Changes are saved to this browser only — they are not visible to anyone else and there is no server behind them. Clearing site data restores the original records.</div>
+      </div>
+
+      <!-- members -->
+      <section class="app__panel" id="view-members">
+        <div class="toolbar" style="border:0;box-shadow:none;border-bottom:1px solid var(--line);border-radius:0">
+          <div class="search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="6.6"/><path d="M16 16l4.4 4.4"/></svg>
+            <label class="sr-only" for="m-search">Search members</label>
+            <input id="m-search" type="search" placeholder="Search company, city or country" autocomplete="off">
+          </div>
+          <label class="sr-only" for="m-region">Region</label>
+          <select id="m-region"></select>
+          <label class="sr-only" for="m-tier">Market tier</label>
+          <select id="m-tier"></select>
+          <label class="sr-only" for="m-status">Status</label>
+          <select id="m-status"></select>
+          <span class="toolbar__result" id="m-count"></span>
+        </div>
+        <div class="table-wrap">
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">Company</th>
+                <th scope="col">Region</th>
+                <th scope="col">Tier</th>
+                <th scope="col">Since</th>
+                <th scope="col">Team</th>
+                <th scope="col">Country slots</th>
+                <th scope="col">Status</th>
+                <th scope="col"><span class="sr-only">Actions</span></th>
+              </tr>
+            </thead>
+            <tbody id="m-rows"></tbody>
+          </table>
+        </div>
+        <div class="empty" id="m-empty" hidden>
+          <h3>No members match these filters</h3>
+          <p>Widen the search or clear the filters to see the full register.</p>
+        </div>
+      </section>
+
+      <!-- applications -->
+      <section class="app__panel" id="view-queue" hidden>
+        <div class="app__panel-head">
+          <div>
+            <h2>Pending applications</h2>
+            <p>Approving publishes the company to the public directory. Rejecting removes it from the queue.</p>
+          </div>
+        </div>
+        <div class="app__panel-body app__panel-body--flush">
+          <div class="queue" id="q-list"></div>
+          <div class="empty" id="q-empty" hidden>
+            <h3>The queue is clear</h3>
+            <p>New membership applications will appear here for the board to review.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- settings -->
+      <section class="settings" id="view-settings" hidden>
+        <div class="app__panel">
+          <div class="app__panel-head">
+            <div>
+              <h2>Country representation</h2>
+              <p>The network limit applied to every market.</p>
+            </div>
+          </div>
+          <div class="app__panel-body">
+            <div class="field">
+              <label for="s-slots">Members allowed per country</label>
+              <input id="s-slots" type="number" min="1" max="20" step="1">
+            </div>
+            <p class="muted" style="font-size:.86rem;margin:10px 0 0" id="s-slots-help"></p>
+          </div>
+        </div>
+
+        <div class="app__panel">
+          <div class="app__panel-head">
+            <div>
+              <h2>Market overrides</h2>
+              <p>Larger markets allowed more than the standard number of members.</p>
+            </div>
+          </div>
+          <div class="app__panel-body">
+            <div class="override" id="s-override"></div>
+            <div class="override__add">
+              <select id="s-add-country" aria-label="Country to override"></select>
+              <button class="btn btn--ghost btn--sm" type="button" id="s-add-override">Add override</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="app__panel settings--full">
+          <div class="app__panel-head">
+            <div>
+              <h2>Due tiers</h2>
+              <p>Membership dues are set by market size. Tiers label members in the directory and the register.</p>
+            </div>
+          </div>
+          <div class="app__panel-body app__panel-body--flush">
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th scope="col">Tier</th>
+                    <th scope="col">Basis</th>
+                    <th scope="col">Applies to</th>
+                    <th scope="col">Members</th>
+                  </tr>
+                </thead>
+                <tbody id="s-tiers"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="app__panel settings--full">
+          <div class="app__panel-body">
+            <div class="danger-zone" style="margin-top:0;padding-top:0;border-top:0">
+              <h3>Reset the demo</h3>
+              <p>Restores the original fictional companies, applications and network rules in this browser, and discards every change you have made.</p>
+              <button class="btn btn--danger btn--sm" type="button" id="s-reset">Reset demo data</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- add / edit member -->
+<div class="drawer" id="member-drawer" hidden>
+  <div class="drawer__scrim" data-close></div>
+  <div class="drawer__panel" role="dialog" aria-modal="true" aria-labelledby="drawer-title">
+    <div class="drawer__head">
+      <div style="min-width:0">
+        <h2 id="drawer-title">Add member</h2>
+        <p class="muted" id="drawer-sub" style="margin:4px 0 0;font-size:.88rem"></p>
+      </div>
+      <button class="drawer__close" type="button" data-close aria-label="Close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      </button>
+    </div>
+    <form class="drawer__body" id="member-form">
+      <div class="form-grid">
+        <div class="field field--full">
+          <label for="a-name">Registered company name</label>
+          <input id="a-name" name="name" type="text" required>
+        </div>
+        <div class="field">
+          <label for="a-city">City</label>
+          <input id="a-city" name="city" type="text" required>
+        </div>
+        <div class="field">
+          <label for="a-country">Country</label>
+          <input id="a-country" name="country" type="text" required>
+          <p class="meter__label" id="a-slot-help" style="margin:8px 0 0"></p>
+        </div>
+        <div class="field">
+          <label for="a-region">Region</label>
+          <select id="a-region" name="region" required></select>
+        </div>
+        <div class="field">
+          <label for="a-tier">Market tier</label>
+          <select id="a-tier" name="tier" required></select>
+        </div>
+        <div class="field">
+          <label for="a-since">Member since</label>
+          <input id="a-since" name="since" type="number" min="1990" max="2100" step="1">
+        </div>
+        <div class="field">
+          <label for="a-staff">Team size</label>
+          <input id="a-staff" name="staff" type="number" min="0" step="1">
+        </div>
+        <div class="field field--full">
+          <label for="a-website">Website</label>
+          <input id="a-website" name="website" type="text" placeholder="company.com">
+        </div>
+        <div class="field field--full">
+          <label for="a-about">Directory summary</label>
+          <textarea id="a-about" name="about" style="min-height:96px" required></textarea>
+        </div>
+        <div class="field">
+          <label for="a-contact-name">Contact name</label>
+          <input id="a-contact-name" name="contactName" type="text">
+        </div>
+        <div class="field">
+          <label for="a-contact-title">Contact title</label>
+          <input id="a-contact-title" name="contactTitle" type="text">
+        </div>
+        <div class="field">
+          <label for="a-contact-email">Contact e-mail</label>
+          <input id="a-contact-email" name="contactEmail" type="email">
+        </div>
+        <div class="field">
+          <label for="a-contact-phone">Contact telephone</label>
+          <input id="a-contact-phone" name="contactPhone" type="tel">
+        </div>
+        <div class="field field--full">
+          <label id="a-services-label">Service lines</label>
+          <div class="chip-row" id="a-services" role="group" aria-labelledby="a-services-label"></div>
+        </div>
+        <div class="field field--full">
+          <label for="a-status">Directory status</label>
+          <select id="a-status" name="status">
+            <option value="active">Published — visible in the directory</option>
+            <option value="suspended">Suspended — hidden from the directory</option>
+          </select>
+        </div>
+        <p class="form-error field--full" id="a-error" role="alert" hidden></p>
+      </div>
+    </form>
+    <div class="drawer__foot">
+      <div class="btn-row btn-row--end">
+        <button class="btn btn--ghost btn--sm" type="button" data-close>Cancel</button>
+        <button class="btn btn--primary btn--sm" type="submit" form="member-form" id="a-save">Save member</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="assets/data/members.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/admin.js"></script>
+</body>
+</html>
